@@ -1,0 +1,3 @@
+1. Setup conda environment with "conda env create -f env.yml"
+2. activate conda environment
+3. Follow instructions to set up matlab api: https://www.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html
