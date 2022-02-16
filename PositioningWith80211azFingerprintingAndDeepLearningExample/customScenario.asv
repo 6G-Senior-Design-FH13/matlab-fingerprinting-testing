@@ -1,6 +1,6 @@
-TR = stlread("cornerWithFloor.stl");
+TR = stlread("corner.stl");
 viewer = siteviewer('SceneModel',TR);
-mapFileName = "cornerWithFloor.stl";
+mapFileName = "corner.stl";
 tx = txsite("cartesian", ...
     "AntennaPosition",[0; 0; 2], ...
     "TransmitterFrequency",2.8e9);
@@ -22,10 +22,10 @@ plot(r)
 
 snrs = [10 15 20]; 
 chanBW = "CBW40"; 
-txArraySize = [1 1];
-rxArraySize = [1 1];
+txArraySize = [4 1];
+rxArraySize = [4 1];
 
-rays = raytrace(tx,rx,pm,"Map",mapFileName);
+rays = raytrace(APs,STAs,pm,"Map",mapFileName);
 
 cfg = heRangingConfig('ChannelBandwidth',chanBW, ...
     "NumTransmitAntennas",1, ...
@@ -33,8 +33,8 @@ cfg = heRangingConfig('ChannelBandwidth',chanBW, ...
     "GuardInterval",1.6);
 cfg.User{1}.NumSpaceTimeStreams = prod(txArraySize);
 
-[features,labels] = dlPositioningGenerateDataSet(rays,rx,tx,cfg,snrs);
+[features,labels] = dlPositioningGenerateDataSet(rays,STAs,APs,cfg,snrs);
 
 save('features_out.mat', 'features', '-mat' );
-position=labels.position;
+position=labels.position
 save('labels_out.mat', 'position', '-mat');

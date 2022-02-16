@@ -20,7 +20,7 @@ ofdmInfo = wlanHEOFDMInfo('HE-LTF',cfg.ChannelBandwidth,cfg.GuardInterval);
 % Create empty cir (feature) and loc (labels) matrices. cir is of size Ns x
 % Nsts*Nr x Nsnr x Ntx*Nrx 4-D matrix This is reshaped to Ns x Nsts*Nr x
 % Naps x Nsnr*Nstas for easier processing and use in the CNN.
-cir = zeros([ofdmSymbolOffset*ofdmInfo.CPLength cfg.User{1}.NumSpaceTimeStreams length(snrs) numChan],'single');
+cir = zeros([ofdmSymbolOffset*ofdmInfo.CPLength cfg.User{1}.NumSpaceTimeStreams*prod(STAs(1).Antenna.Size) length(snrs) numChan],'single');
 labels.position = zeros([3 numChan]);
 for i = 1:numChan
     txn = mod(i-1,height(rays))+1;
@@ -45,7 +45,7 @@ for i = 1:numChan
 end
 
 % Ns x Nsts*Nr x Nsnr x Naps x Nstas
-cir = reshape(cir,[ofdmSymbolOffset*ofdmInfo.CPLength cfg.User{1}.NumSpaceTimeStreams length(snrs) numel(APs) numel(STAs)]);
+cir = reshape(cir,[ofdmSymbolOffset*ofdmInfo.CPLength cfg.User{1}.NumSpaceTimeStreams*prod(STAs(1).Antenna.Size) length(snrs) numel(APs) numel(STAs)]);
 % Ns x Nsts*Nr x Naps x Nsnr x Nstas
 cir = permute(cir,[1 2 4 3 5]);
 % Ns x Nsts*Nr x Naps x Nsnr*Nstas
@@ -77,7 +77,7 @@ function cir = generateCIR(rays,AP,STA,cfg,tx,ofdmInfo,snr,ofdmSymbolOffset)
     
     % Create matrix for CIR to be stored in. 
     % Dimensions are Ns x Nsts*Nr x Nsnr
-    cir = zeros([ofdmSymbolOffset*ofdmInfo.CPLength cfg.User{1}.NumSpaceTimeStreams length(snr)],'single');
+    cir = zeros([ofdmSymbolOffset*ofdmInfo.CPLength cfg.User{1}.NumSpaceTimeStreams*prod(STA.Antenna.Size) length(snr)],'single');
     
     % Adjust power of noise added such that the SNR is per active
     % subcarrier
