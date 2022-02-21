@@ -3,7 +3,7 @@ viewer = siteviewer('SceneModel',TR);
 mapFileName = "cornerWithFloor.stl";
 tx = txsite("cartesian", ...
     "AntennaPosition",[0; 0; 2], ...
-    "TransmitterFrequency",2.8e9);
+    "TransmitterFrequency",1e11);
 show(tx,"ShowAntennaHeight",false) 
 
 rx = rxsite("cartesian", ...
@@ -20,7 +20,7 @@ r = raytrace(tx,rx,pm);
 r = r{1};
 plot(r)
 
-snrs = [10 15 20]; 
+snrs = 10; 
 chanBW = "CBW40"; 
 txArraySize = [1 1];
 rxArraySize = [1 1];
