@@ -1,24 +1,36 @@
-TR = stlread("cornerWithFloor.stl");
-viewer = siteviewer('SceneModel',TR);
-mapFileName = "cornerWithFloor.stl";
+TR = stlread("office.stl");
+mapFileName = "office.stl";
+scale = 0.9;
+scaledPts = TR.Points * scale;
+TR_scaled = triangulation(TR.ConnectivityList,scaledPts);
+
+viewer = siteviewer('SceneModel',TR_scaled);
+
+
+
 tx = txsite("cartesian", ...
-    "AntennaPosition",[0; 0; 2], ...
-    "TransmitterFrequency",1e11);
+    "AntennaPosition",[0.01; 1; 2.5], ...
+    "TransmitterFrequency",100e9); %100GHz max
 show(tx,"ShowAntennaHeight",false) 
 
 rx = rxsite("cartesian", ...
-    "AntennaPosition",[4; 5; 1]);
+    "AntennaPosition",[4.5; 3.5; 0.8]);
 show(rx,"ShowAntennaHeight",false)
+
+txArraySize = [1 1];
+rxArraySize = [1 1];
+
+los(tx,rx);
+
 
 pm = propagationModel("raytracing", ...
     "CoordinateSystem","cartesian", ...
-    "Method","sbr", ...
+    "Method","image", ...
     "MaxNumReflections",2, ...
     "SurfaceMaterial","wood"); 
-
 r = raytrace(tx,rx,pm);
-r = r{1};
-plot(r)
+% r = r{1};
+plot(r{1});
 
 snrs = 10; 
 chanBW = "CBW40"; 
