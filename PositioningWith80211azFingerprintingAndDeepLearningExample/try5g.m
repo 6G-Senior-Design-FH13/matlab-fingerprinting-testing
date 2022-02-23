@@ -1,3 +1,4 @@
+%Jean Lee's Code
 TR = stlread("office.stl");
 
 scale = 0.9;
