@@ -50,10 +50,10 @@ cfg.User{1}.NumSpaceTimeStreams = prod(txArraySize);
 
 [features,labels] = dlPositioningGenerateDataSet(rays,rx,tx,cfg,snrs);
 
-fname = ['f' '_' num2str(xt,'%d') '.' num2str(yt,'%d') '.' num2str(zt,'%d') '_' num2str(xr,'%d') '.' num2str(yr,'%d') '.' num2str(zr,'%d') '.mat'];
-lname = ['l' '_' num2str(xt,'%d') '.' num2str(yt,'%d') '.' num2str(zt,'%d') '_' num2str(xr,'%d') '.' num2str(yr,'%d') '.' num2str(zr,'%d') '.mat'];
+fname = ['f' '_' num2str(xt,'%d') '_' num2str(yt,'%d') '_' num2str(zt,'%d') '_' num2str(xr,'%d') '_' num2str(yr,'%d') '_' num2str(zr,'%d') '.mat'];
+lname = 
+print(name)
 
-
-save(fname, 'features', '-mat' );
+save('f.mat', 'features', '-mat' );
 position=labels.position;
-save(lname, 'position', '-mat');
+save('labels_out.mat', 'position', '-mat');
