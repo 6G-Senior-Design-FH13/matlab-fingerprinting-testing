@@ -57,7 +57,7 @@ save(fname, 'features', '-mat' );
 position=labels.position;
 save(lname, 'position', '-mat');
 
-
+% Worked with Brian and Justin
 % triangulation
 a=rays{1,1}(1,1).PropagationDistance * cos(rays{1,1}(1,1).AngleOfDeparture(1)*pi/180) * cos(rays{1,1}(1,1).AngleOfDeparture(2)*pi/180);
 b=rays{1,1}(1,1).PropagationDistance * sin(rays{1,1}(1,1).AngleOfDeparture(1)*pi/180) * cos(rays{1,1}(1,1).AngleOfDeparture(2)*pi/180);
