@@ -1,4 +1,4 @@
-function [cir, labels] = dlPositioningGenerateDataSet(rays, STAs, APs, cfg, snrs)
+function [cir] = dlPositioningGenerateDataSet(rays, STAs, APs, cfg, snrs)
 %HELPERGENERATEDATASET Generate a Dataset of 802.11az CIR Fingerprints 
 %   dlPositioningGenerateDataSet(RAYS, STAS, APS, CFG, SNRS) create
 %   multiple channels from multi-path propagation objects, RAYS, between
@@ -21,7 +21,7 @@ ofdmInfo = wlanHEOFDMInfo('HE-LTF',cfg.ChannelBandwidth,cfg.GuardInterval);
 % Nsts*Nr x Nsnr x Ntx*Nrx 4-D matrix This is reshaped to Ns x Nsts*Nr x
 % Naps x Nsnr*Nstas for easier processing and use in the CNN.
 cir = zeros([ofdmSymbolOffset*ofdmInfo.CPLength cfg.User{1}.NumSpaceTimeStreams length(snrs) numChan],'single');
-labels.position = zeros([3 numChan]);
+%labels.position = zeros([3 numChan]);
 for i = 1:numChan
     txn = mod(i-1,height(rays))+1;
     rxn = ceil(i/height(rays));
@@ -34,8 +34,8 @@ for i = 1:numChan
         % Generates the channel estimate/returns the CIR.
         cir(:,:,:,i) = generateCIR(rays{i},APs(txn),STAs(rxn),cfg,txWaveform,ofdmInfo,snrs,ofdmSymbolOffset);     
     end       
-    labels.position(:,i) = [STAs(rxn).AntennaPosition];
-    labels.class(i) = categorical(cellstr(STAs(rxn).Name));  
+    %labels.position(:,i) = [STAs(rxn).AntennaPosition];
+    %labels.class(i) = categorical(cellstr(STAs(rxn).Name));  
 
     % Displays progress (10% intervals)
     if mod(i,floor(numChan/10))==0
@@ -51,12 +51,12 @@ cir = permute(cir,[1 2 4 3 5]);
 % Ns x Nsts*Nr x Naps x Nsnr*Nstas
 cir = reshape(cir,[size(cir,1) size(cir,2) size(cir,3) size(cir,4)*size(cir,5)]);
 
-labels.position = labels.position(:, 1:height(rays):end);
-labels.class = labels.class(:, 1:height(rays):end); % Remove duplicated locations
+%labels.position = labels.position(:, 1:height(rays):end);
+%labels.class = labels.class(:, 1:height(rays):end); % Remove duplicated locations
 
 % Create and scale training labels from rx locations to correct size
-labels.position = repelem(labels.position, 1, length(snrs));
-labels.class = repelem(labels.class, 1, length(snrs));
+%labels.position = repelem(labels.position, 1, length(snrs));
+%labels.class = repelem(labels.class, 1, length(snrs));
 
 end
 
