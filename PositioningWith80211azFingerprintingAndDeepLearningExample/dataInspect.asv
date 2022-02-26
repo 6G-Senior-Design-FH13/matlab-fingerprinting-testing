@@ -1,0 +1,21 @@
+count=0;
+%featC=feats;
+labelC=labels;
+uBound=51120;
+for i=1:1:uBound
+    curr=featC(:,i);
+    zcount=0;
+    for j=1:1:48
+        samp=curr(j,1);
+        if(samp==0)
+            zcount=zcount+1;
+        end
+    end
+    if(zcount==48)
+        count=count+1;
+        featC(:,i)=[];
+        labelC(:,i)=[];
+        i=i-1;
+        uBound=uBound-1;
+    end
+end
