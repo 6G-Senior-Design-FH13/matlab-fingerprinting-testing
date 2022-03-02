@@ -4,7 +4,7 @@ distribution = "uniform";
 txArraySize = [4 1]; % Linear transmit array
 rxArraySize = [1 1]; % Linear transmit array
 chanBW = "CBW40"; 
-staSeparation = .5; % STA separation, in meters, used only when the distribution is uniform
+staSeparation = .25; % STA separation, in meters, used only when the distribution is uniform
 numSTAs = 300;  
 S = RandStream("mt19937ar","Seed",5489); % Set the RNG for reproducibility.
 RandStream.setGlobalStream(S);
@@ -13,8 +13,8 @@ if distribution == "uniform"
 else
     [APs,STAs] = DEFdlPositioningCreateEnvironment(txArraySize,rxArraySize,numSTAs,"random");
 end
-show(APs)
-show(STAs,'ShowAntennaHeight',false,'IconSize',[16 16]);
+%show(APs)
+%show(STAs,'ShowAntennaHeight',false,'IconSize',[16 16]);
 pm = propagationModel("raytracing", ...
     "CoordinateSystem","cartesian", ...
     "SurfaceMaterial","wood", ...
