@@ -1,8 +1,8 @@
 mapFileName = "office.stl";
 viewer = siteviewer("SceneModel",mapFileName,"Transparency",0.25);
-distribution = "random";
+distribution = "uniform";
 txArraySize = [4 1]; % Linear transmit array
-rxArraySize = [4 1]; % Linear transmit array
+rxArraySize = [1 1]; % Linear transmit array
 chanBW = "CBW40"; 
 staSeparation = .5; % STA separation, in meters, used only when the distribution is uniform
 numSTAs = 300;  
