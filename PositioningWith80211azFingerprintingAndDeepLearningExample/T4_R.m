@@ -5,7 +5,7 @@ for i=1:10
     txArraySize = [4 1]; % Linear transmit array
     rxArraySize = [1 1]; % Linear receive array
     chanBW = "CBW40"; 
-    staSeparation = .2; % STA separation, in meters, used only when the distribution is uniform
+    staSeparation = .1; % STA separation, in meters, used only when the distribution is uniform
     numSTAs = 300;  
     S = RandStream("mt19937ar","Seed",5489); % Set the RNG for reproducibility.
     RandStream.setGlobalStream(S);
@@ -33,8 +33,8 @@ for i=1:10
     if distribution == "uniform"
         %save(name, 'features', '-mat' );
         %save('output/labels4T.mat', 'lp', '-mat' );
-        save('output/feats4T_RValidate.mat', 'features', '-mat' );
-        save('output/labels4T_RValidate.mat', 'lp', '-mat' );
+        save('output/feats4T_.1R.mat', 'features', '-mat' );
+        save('output/labels4T_.1R.mat', 'lp', '-mat' );
     else
         save('output/feats4T_RValidate.mat', 'features', '-mat' );
         save('output/labels4T_RValidate.mat', 'lp', '-mat' );
