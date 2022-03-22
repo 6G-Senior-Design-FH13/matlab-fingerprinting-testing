@@ -1,11 +1,11 @@
 for i=1:10
     mapFileName = "office.stl";
-    viewer = siteviewer("SceneModel",mapFileName,"Transparency",0.25);
+    %viewer = siteviewer("SceneModel",mapFileName,"Transparency",0.25);
     distribution = "uniform";
     txArraySize = [4 1]; % Linear transmit array
-    rxArraySize = [1 1]; % Linear transmit array
+    rxArraySize = [1 1]; % Linear receive array
     chanBW = "CBW40"; 
-    staSeparation = .5; % STA separation, in meters, used only when the distribution is uniform
+    staSeparation = .2; % STA separation, in meters, used only when the distribution is uniform
     numSTAs = 300;  
     S = RandStream("mt19937ar","Seed",5489); % Set the RNG for reproducibility.
     RandStream.setGlobalStream(S);
@@ -31,10 +31,12 @@ for i=1:10
     lp = labels.position;
     nameF=['output/feats4T(' int2str(i) ').mat'];
     if distribution == "uniform"
-        save(name, 'features', '-mat' );
+        %save(name, 'features', '-mat' );
         %save('output/labels4T.mat', 'lp', '-mat' );
+        save('output/feats4T_RValidate.mat', 'features', '-mat' );
+        save('output/labels4T_RValidate.mat', 'lp', '-mat' );
     else
-        save('output/feats4TValidate.mat', 'features', '-mat' );
-        save('output/labels4TValidate.mat', 'lp', '-mat' );
+        save('output/feats4T_RValidate.mat', 'features', '-mat' );
+        save('output/labels4T_RValidate.mat', 'lp', '-mat' );
     end
 end
