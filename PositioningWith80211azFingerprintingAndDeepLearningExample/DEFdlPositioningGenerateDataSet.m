@@ -13,7 +13,7 @@ function [cir, labels] = DEFdlPositioningGenerateDataSet(rays, STAs, APs, cfg, s
 ofdmSymbolOffset = 0.75;
 
 numChan = numel(rays);
-txWaveform = single(heRangingWaveformGenerator(cfg)); % Generate 802.11az packet
+txWaveform = single(DEFheRangingWaveformGenerator(cfg)); % Generate 802.11az packet
 
 ofdmInfo = wlanHEOFDMInfo('HE-LTF',cfg.ChannelBandwidth,cfg.GuardInterval);
 
