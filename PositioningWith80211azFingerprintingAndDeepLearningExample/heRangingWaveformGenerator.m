@@ -204,22 +204,34 @@ preamble = [LSTF; LLTF; LSIG; RLSIG; SIGA; STF; LTF];
 % Define a matrix of total simulation length
 numIdleSamples = round(sr*useParams.IdleTime);
 pktWithIdleLength = numPktSamples+numIdleSamples;
+
 txWaveform = complex(zeros(useParams.NumPackets*pktWithIdleLength,numTxAnt));
 
 % Set the PE field
 lastDataSymBlk = preamble(end-heltfSymLen+cpLen+1:end,:);
 packetExt = getPacketExtensionData(lastDataSymBlk,Npe);
-if cfgFormat.SecureHELTF
-    peField = [zeros(cpLen,size(packetExt,2)); packetExt(cpLen+1:end,:)]; % Zero power GI
-else
-    peField = packetExt;
-end
-    
+% if cfgFormat.SecureHELTF
+% %     peField = [zeros(cpLen,size(packetExt,2)); packetExt(cpLen+1:end,:)]; % Zero power GI
+%     % % % % % % chirp signal%%%%%%
+% % %     t = 0:1/1e3:2;
+% %     peField = [zeros(cpLen,size(packetExt,2)); packetExt(cpLen+1:end,:)];
+% % %     chirp(t,0,1,250);
+% else
+%     peField = packetExt;
+% end
+% [numRows,numCols] = size(preamble);
+t = 0:1/sr:159*(1/sr);
+peField = chirp(t,1e6,t(end),20e6)'; % 20e6 = sr/2
+figure(4);
+pspectrum(peField,sr,'spectrogram', 'TimeResolution',0.000001, 'OverlapPercent',99);
+
 for i = 1:useParams.NumPackets
     % Construct packet from preamble and data
     packet = [preamble; peField];
     txWaveform((i-1)*pktWithIdleLength+(1:numPktSamples),:) = packet;
 end
+figure(9);
+pspectrum(preamble,sr,'spectrogram', 'TimeResolution',0.000001, 'OverlapPercent',99);
 
 if useParams.NumPackets>0 && useParams.WindowTransitionTime>0
     % Window waveform (no need to validate TT against GI dynamically)

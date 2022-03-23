@@ -19,7 +19,6 @@ rxArray = arrayConfig("Size", rxArraySize, "ElementSpacing", lambda);
 
 % Create array of corordinates that will be used for tx locations.
 % By default these are the 0.1m away from each corner of the office.
-% This translates the array of transmitters
 
 xAP = [0.1 4.9];
 yAP = [0.1 7.9];
