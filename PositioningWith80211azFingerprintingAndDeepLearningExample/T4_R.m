@@ -18,7 +18,7 @@
     pm = propagationModel("raytracing", ...
         "CoordinateSystem","cartesian", ...
         "SurfaceMaterial","wood", ...
-        "MaxNumReflections",1);
+        "MaxNumReflections",2);
     rays = raytrace(APs,STAs,pm,"Map",mapFileName);
     snr = 10; 
     cfg = heRangingConfig('ChannelBandwidth',chanBW, ...
@@ -32,10 +32,10 @@
     if distribution == "uniform"
         %save(name, 'features', '-mat' );
         %save('output/labels4T.mat', 'lp', '-mat' );
-        save('output/feats4T_.5R.mat', 'features', '-mat' );
-        save('output/labels4T_.5R.mat', 'lp', '-mat' );
+        save('output/feats4T_.5R_2refl.mat', 'features', '-mat' );
+        save('output/labels4T_.5R_2refl.mat', 'lp', '-mat' );
     else
-        save('output/feats4T_480R.mat', 'features', '-mat' );
-        save('output/labels4T_480R.mat', 'lp', '-mat' );
+        save('output/feats4T_480R_2refl.mat', 'features', '-mat' );
+        save('output/labels4T_480R_2refl.mat', 'lp', '-mat' );
     end
 
