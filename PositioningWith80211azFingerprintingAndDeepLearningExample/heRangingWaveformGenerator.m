@@ -186,8 +186,8 @@ end
 numPktSamples = psps.NumPacketSamples;
 numTxAnt = cfgFormat.NumTransmitAntennas;
 cbw = wlan.internal.cbwStr2Num(cfgFormat.ChannelBandwidth);
-sr = cbw*1e6;
-sf = cbw*1e-3; % Scaling factor to convert bandwidth and time in ns to samples
+sr = 1e9;
+sf = 1; % Scaling factor to convert bandwidth and time in ns to samples
 cpLen = trc.TGIData*sf;
 heltfSymLen = trc.THELTFSYM*sf;
 Npe = wlan.internal.heNumPacketExtensionSamples(trc.TPE,cbw);
@@ -208,8 +208,8 @@ pktWithIdleLength = numPktSamples+numIdleSamples;
 txWaveform = complex(zeros(useParams.NumPackets*pktWithIdleLength,numTxAnt));
 
 % Set the PE field
-lastDataSymBlk = preamble(end-heltfSymLen+cpLen+1:end,:);
-packetExt = getPacketExtensionData(lastDataSymBlk,Npe);
+% lastDataSymBlk = preamble(end-heltfSymLen+cpLen+1:end,:);
+% packetExt = getPacketExtensionData(lastDataSymBlk,Npe);
 % if cfgFormat.SecureHELTF
 % %     peField = [zeros(cpLen,size(packetExt,2)); packetExt(cpLen+1:end,:)]; % Zero power GI
 %     % % % % % % chirp signal%%%%%%
@@ -221,7 +221,7 @@ packetExt = getPacketExtensionData(lastDataSymBlk,Npe);
 % end
 % [numRows,numCols] = size(preamble);
 t = 0:1/sr:159*(1/sr);
-peField = chirp(t,1e6,t(end),20e6)'; % 20e6 = sr/2
+peField = chirp(t,25e7,t(end),5e8)'; % 5e8 = sr/2
 figure(4);
 pspectrum(peField,sr,'spectrogram', 'TimeResolution',0.000001, 'OverlapPercent',99);
 
