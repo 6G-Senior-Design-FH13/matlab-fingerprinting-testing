@@ -1,6 +1,6 @@
     mapFileName = "office.stl";
     %viewer = siteviewer("SceneModel",mapFileName,"Transparency",0.25);
-    distribution = "random";
+    distribution = "uniform";
     txArraySize = [4 1]; % Linear transmit array
     rxArraySize = [1 1]; % Linear receive array
     chanBW = "CBW40"; 
@@ -18,7 +18,7 @@
     pm = propagationModel("raytracing", ...
         "CoordinateSystem","cartesian", ...
         "SurfaceMaterial","wood", ...
-        "MaxNumReflections",2);
+        "MaxNumReflections",3);
     rays = raytrace(APs,STAs,pm,"Map",mapFileName);
     snr = 10; 
     cfg = heRangingConfig('ChannelBandwidth',chanBW, ...
@@ -32,8 +32,8 @@
     if distribution == "uniform"
         %save(name, 'features', '-mat' );
         %save('output/labels4T.mat', 'lp', '-mat' );
-        save('output/feats4T_.5R_2refl.mat', 'features', '-mat' );
-        save('output/labels4T_.5R_2refl.mat', 'lp', '-mat' );
+        save('output/feats4T_.5R_3refl.mat', 'features', '-mat' );
+        save('output/labels4T_.5R_3refl.mat', 'lp', '-mat' );
     else
         save('output/feats4T_480R_2refl.mat', 'features', '-mat' );
         save('output/labels4T_480R_2refl.mat', 'lp', '-mat' );
