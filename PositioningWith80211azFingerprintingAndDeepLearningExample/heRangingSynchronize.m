@@ -48,6 +48,11 @@ if ~isempty(coarsePktOffset) && ((coarsePktOffset+ind.LSIG(2))<=size(rx,1))
 
     % Determine final packet offset
     pktOffset = coarsePktOffset+finePktOffset;
+
+    % % % %     offset should be start from same base. verify the offsets start at
+% % % %     the same time.
+% % % %      save the pktoffset for each basestations and plug that into
+% % % % trilateration
     
     % Check if the packet is detected out of the range. With a maximum
     % propagation distance of 100 meters, the expected maximum propagation

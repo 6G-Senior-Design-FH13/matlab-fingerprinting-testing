@@ -204,60 +204,100 @@
 
 
 
-function [range, chanEst] = dlPositioningGenerateDataSet(rays, STAs, APs, cfg, snrs)
+function [range] = dlPositioningGenerateDataSet(rays, STAs, APs, cfg, snrs)
     % Adjust power of noise added such that the SNR is per active
     % subcarrier
-%     snrAdj = snr-10*log10();
+    % snrAdj = snr-10*log10();
     numChan = numel(rays);
 
 % % % % % % % % % % % % % % % % %     
-    sr = 40e6;
-    t = 0:1/sr:159*(1/sr);
-    peField = chirp(t,1e6,t(end),20e6)'; % 20e6 = sr/2
-
-    
+    sr = 200e6;
+    x = [];
+    y = [];
+    z = [];
     for i = 1:numChan
         txn = mod(i-1,height(rays))+1;
         rxn = ceil(i/height(rays));
 
 
-        txWaveform = single(heRangingWaveformGenerator(cfg)); % Generate 802.11az packet
-%         figure(1);
-%         pspectrum(txWaveform,40e6,'spectrogram', 'TimeResolution',0.000001, 'OverlapPercent',99);
+%         txWaveform = single(heRangingWaveformGenerator(cfg)); % Generate 802.11az packet
+        
+        t = 0:1/sr:159*(1/sr);
+% % % % % % % % % % % % % %         
+        peField = chirp(t,0,t(end),100e6)'; % 5e8 = sr/2
+% % % % % % % % % %         
+        txWaveform = peField;
+        figure(1);
+        pspectrum(txWaveform,sr,'spectrogram', 'TimeResolution',0.0000001, 'OverlapPercent',99);
 
 
         rtChan = comm.RayTracingChannel(rays{i},APs(txn),STAs(rxn)); % Create channel
-        rtChan.SampleRate = wlanSampleRate(cfg.ChannelBandwidth);
+        rtChan.SampleRate = sr;
         rtChan.ReceiverVirtualVelocity = [0; 0; 0]; % Stationary Receiver
         rtChan.NormalizeChannelOutputs = false;
         
         rxChan = rtChan(txWaveform); % Pass waveform through channel
-        
+        figure(2);
+        pspectrum(rxChan,sr,'spectrogram', 'TimeResolution',0.0000001, 'OverlapPercent',99);
         % Add noise to the the received waveform for each snr value,
         % Perform synchronization, channel estimation
         for j=1:length(snrs)
             rx = awgn(rxChan,snrs(j)); 
-            chanEst = heRangingSynchronize(double(rx),cfg); % Perform synchronization and channel estimation.
-            if isempty(chanEst)
-                continue % Synchronization fails
-            end
+%             [chanEst, pktOffset] = heRangingSynchronize(double(rx),cfg); % Perform synchronization and channel estimation.
+%             if isempty(chanEst)
+%                 continue % Synchronization fails
+%             end
+            d = finddelay(rx,txWaveform);
+            display(d);
+
+            L = 160; %length of signal
+            r = xcorr(rx, peField);
+            Fs = sr;
+            Y = fft(r);
+            P2 = abs(Y/L);
+            P1 = P2(1:L/2+1);
+            P1(2:end-1) = 2*P1(2:end-1);
+            f = Fs*(0:(L/2))/L;
+            figure(11);
+            plot(f,P1); %single sided spectrum
+            hold on;
+            bw = 100e6; %CBW40 = 40MHz
+            T = length(t); %time duration of the chirp
+            %find the freq of the peak
+            [maxY, indexMaxY] = max(P1);
+            fp = f(indexMaxY(1));
+            %find the range
+            range_ = bw/(T*fp);
+            disp(range_);
         end
+        range(i) = range_;
+%         disp(rays{i}.TransmitterLocation);
+        x(i) = rays{i}(1,1).TransmitterLocation(1);
+        y(i) = rays{i}(1,1).TransmitterLocation(2);
+        z(i) = rays{i}(1,1).TransmitterLocation(3);
     end 
-        r = xcorr(chanEst, txWaveform);
-        L = 160;
-        Fs = sr;
-        Y = fft(r);
-        P2 = abs(Y/L);
-        P1 = P2(1:L/2+1);
-        P1(2:end-1) = 2*P1(2:end-1);
-        f = Fs*(0:(L/2))/L;
-        figure(11);
-        plot(f,P1);
-        hold on;
-        bw = 40e6; %CBW40 = 40MHz
-        T = 3.5e-6;
-        [maxY, indexMaxY] = max(P1);
-        fp = f(indexMaxY(1));
-        range = bw/(T*fp);
-%         disp(range);
+    % fix the equation.....
+%     A = [2*(APs(2).AntennaPosition(1,1) - APs(1).AntennaPosition(1,1)) 2*(APs(2).AntennaPosition(2,1) - APs(1).AntennaPosition(2,1)) 2*(APs(2).AntennaPosition(3,1) - APs(1).AntennaPosition(3,1));
+%         2*(APs(3).AntennaPosition(1,1) - APs(1).AntennaPosition(1,1)) 2*(APs(3).AntennaPosition(2,1) - APs(1).AntennaPosition(2,1)) 2*(APs(3).AntennaPosition(3,1) - APs(1).AntennaPosition(3,1))];
+%     v = [APs(1).AntennaPosition(1,1)^2 + APs(1).AntennaPosition(2,1)^2 + APs(1).AntennaPosition(3,1)^2 - (APs(2).AntennaPosition(1,1)^2 + APs(2).AntennaPosition(2,1)^2 + APs(2).AntennaPosition(3,1)^2) - (range(2)^2 - range(1)^2);
+%         APs(1).AntennaPosition(1,1)^2 + APs(1).AntennaPosition(2,1)^2 + APs(1).AntennaPosition(3,1)^2 - (APs(3).AntennaPosition(1,1)^2 + APs(3).AntennaPosition(2,1)^2 + APs(3).AntennaPosition(3,1)^2) - (range(3)^2 - range(1)^2);];
+%     position = pinv(A'*A)*A'*v;
+%     disp(position);
+%     disp(STAs.AntennaPosition);
+%     A = [2*(APs(4).AntennaPosition(1,1) - APs(1).AntennaPosition(1,1)) 2*(APs(4).AntennaPosition(2,1) - APs(1).AntennaPosition(2,1)) 2*(APs(4).AntennaPosition(3,1) - APs(1).AntennaPosition(3,1));
+%         2*(APs(4).AntennaPosition(1,1) - APs(2).AntennaPosition(1,1)) 2*(APs(4).AntennaPosition(2,1) - APs(2).AntennaPosition(2,1)) 2*(APs(4).AntennaPosition(3,1) - APs(2).AntennaPosition(3,1));
+%         2*(APs(4).AntennaPosition(1,1) - APs(3).AntennaPosition(1,1)) 2*(APs(4).AntennaPosition(2,1) - APs(3).AntennaPosition(2,1)) 2*(APs(4).AntennaPosition(3,1) - APs(3).AntennaPosition(3,1))];
+%     b = [((range(1)^2 - range(4)^2)-(APs(1).AntennaPosition(1,1)^2 - APs(4).AntennaPosition(1,1)^2)-(APs(1).AntennaPosition(2,1)^2 - APs(4).AntennaPosition(2,1)^2)-(APs(1).AntennaPosition(3,1)^2 - APs(4).AntennaPosition(3,1)^2));
+%         ((range(2)^2 - range(4)^2)-(APs(2).AntennaPosition(1,1)^2 - APs(4).AntennaPosition(1,1)^2)-(APs(2).AntennaPosition(2,1)^2 - APs(4).AntennaPosition(2,1)^2)-(APs(2).AntennaPosition(3,1)^2 - APs(4).AntennaPosition(3,1)^2));
+%         ((range(3)^2 - range(4)^2)-(APs(3).AntennaPosition(1,1)^2 - APs(4).AntennaPosition(1,1)^2)-(APs(3).AntennaPosition(2,1)^2 - APs(4).AntennaPosition(2,1)^2)-(APs(3).AntennaPosition(3,1)^2 - APs(4).AntennaPosition(3,1)^2))];
+    A = [2*(x(4) - x(1)) 2*(y(4) - y(1)) 2*(z(4) - z(1));
+        2*(x(4) - x(2)) 2*(y(4) - y(2)) 2*(z(4) - z(2));
+        2*(x(4) - x(3)) 2*(y(4) - y(3)) 2*(z(4) - z(3))];
+    b = [((range(1)^2 - range(4)^2)-(x(1)^2 - x(4)^2)-(y(1)^2 - y(4)^2)-(z(1)^2 - z(4)^2));
+        ((range(2)^2 - range(4)^2)-(x(2)^2 - x(4)^2)-(y(2)^2 - y(4)^2)-(z(2)^2 - z(4)^2));
+        ((range(3)^2 - range(4)^2)-(x(3)^2 - x(4)^2)-(y(3)^2 - y(4)^2)-(z(3)^2 - z(4)^2))];
+    
+    position = pinv(A)*b;
+    disp(position);
+    disp(STAs.AntennaPosition);
 end
