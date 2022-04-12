@@ -249,6 +249,7 @@ function P = dlPositioningGenerateDataSet(rays, STAs, APs, cfg, snrs)
 %         pspectrum(rxChan,sr,'spectrogram', 'TimeResolution',0.0000001, 'OverlapPercent',99);
         % Add noise to the the received waveform for each snr value,
         % Perform synchronization, channel estimation
+%{
         for j=1:length(snrs)
             rx = awgn(rxChan,snrs(j)); 
 %             [chanEst, pktOffset] = heRangingSynchronize(double(rx),cfg); % Perform synchronization and channel estimation.
@@ -288,6 +289,7 @@ function P = dlPositioningGenerateDataSet(rays, STAs, APs, cfg, snrs)
 %             range_ = bw/(T*fp);
 %             disp(range_);
         end
+%}
 %         range(i) = range_;
 % %         disp(rays{i}.TransmitterLocation);
 %         x(i) = rays{i}(1,1).TransmitterLocation(1);
@@ -321,12 +323,12 @@ function P = dlPositioningGenerateDataSet(rays, STAs, APs, cfg, snrs)
 
 
     end
-labels.position = labels.position(:, 1:height(rays):end);
-labels.class = labels.class(:, 1:height(rays):end); % Remove duplicated locations
+% labels.position = labels.position(:, 1:height(rays):end);
+% labels.class = labels.class(:, 1:height(rays):end); % Remove duplicated locations
 
 % Create and scale training labels from rx locations to correct size
 labels.position = repelem(labels.position, 1, length(snrs));
 labels.class = repelem(labels.class, 1, length(snrs));
 
-save('samplesChirp.mat','samples','-mat', '-v7.3');
+% save('samplesChirp.mat','samples','-mat', '-v7.3');
 save('labelsChirp.mat','labels', '-mat', '-v7.3');
