@@ -1,5 +1,5 @@
     mapFileName = "office.stl";
-    %viewer = siteviewer("SceneModel",mapFileName,"Transparency",0.25);
+    viewer = siteviewer("SceneModel",mapFileName,"Transparency",0.25);
     distribution = "uniform";
     txArraySize = [4 1]; % Linear transmit array
     rxArraySize = [1 1]; % Linear receive array
@@ -13,14 +13,14 @@
     else
         [APs,STAs] = DEFdlPositioningCreateEnvironment(txArraySize,rxArraySize,numSTAs,"random");
     end
-    %show(APs)
-    %show(STAs,'ShowAntennaHeight',false,'IconSize',[16 16]);
     pm = propagationModel("raytracing", ...
         "CoordinateSystem","cartesian", ...
         "SurfaceMaterial","wood", ...
-        "MaxNumReflections",3);
+        "MaxNumReflections",2);
     rays = raytrace(APs,STAs,pm,"Map",mapFileName);
     snr = 10; 
+    show(APs)
+    show(STAs(30),'IconSize',[32 32]);
     cfg = heRangingConfig('ChannelBandwidth',chanBW, ...
         "NumTransmitAntennas",prod(txArraySize), ...
         "SecureHELTF",false, ...
@@ -28,10 +28,7 @@
     cfg.User{1}.NumSpaceTimeStreams = prod(txArraySize);
     [features,labels] = DEFdlPositioningGenerateDataSet(rays,STAs,APs,cfg,snr);
     lp = labels.position;
-    %nameF=['output/feats4T(' int2str(i) ').mat'];
     if distribution == "uniform"
-        %save(name, 'features', '-mat' );
-        %save('output/labels4T.mat', 'lp', '-mat' );
         save('output/feats4T_.5R_3refl.mat', 'features', '-mat' );
         save('output/labels4T_.5R_3refl.mat', 'lp', '-mat' );
     else
