@@ -215,6 +215,7 @@ function P = dlPositioningGenerateDataSet(rays, STAs, APs, cfg, snrs)
 %     x = [];
 %     y = [];
 %     z = [];
+    P = [];
     samples = [];
     labels.position = zeros([3 numChan]);
     for i = 1:numChan
