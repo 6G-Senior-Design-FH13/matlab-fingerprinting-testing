@@ -1,4 +1,4 @@
-    mapFileName = "office.stl";
+mapFileName = "office.stl";
     viewer = siteviewer("SceneModel",mapFileName,"Transparency",0.25);
     distribution = "uniform";
     txArraySize = [4 1]; % Linear transmit array
@@ -17,23 +17,12 @@
         "CoordinateSystem","cartesian", ...
         "SurfaceMaterial","wood", ...
         "MaxNumReflections",2);
-    rays = raytrace(APs,STAs,pm,"Map",mapFileName);
-    snr = 10; 
-    show(APs)
-    show(STAs(30),'IconSize',[32 32]);
+    %rays = raytrace(APs,STAs,pm,"Map",mapFileName);
     cfg = heRangingConfig('ChannelBandwidth',chanBW, ...
         "NumTransmitAntennas",prod(txArraySize), ...
         "SecureHELTF",false, ...
         "GuardInterval",1.6);
-    cfg.User{1}.NumSpaceTimeStreams = prod(txArraySize);
-    [features,labels] = DEFdlPositioningGenerateDataSet(rays,STAs,APs,cfg,snr);
-    lp = labels.position;
-    cfg.
-    if distribution == "uniform"
-        save('output/feats4T_.5R_3refl.mat', 'features', '-mat' );
-        save('output/labels4T_.5R_3refl.mat', 'lp', '-mat' );
-    else
-        save('output/feats4T_480R_2refl.mat', 'features', '-mat' );
-        save('output/labels4T_480R_2refl.mat', 'lp', '-mat' );
-    end
-
+    txWaveform=cfg.ChannelBandwidth;
+    snr = 10; 
+    show(APs)
+    show(STAs,'ShowAntennaHeight',false,'IconSize',[16 16]);

@@ -1,10 +1,12 @@
-    mapFileName = "office.stl";
+mapFileName = "office.stl";
     viewer = siteviewer("SceneModel",mapFileName,"Transparency",0.25);
+    daspect([1,1,.3]);axis tight;
+    OptionZ.FrameRate=15;OptionZ.Duration=5.5;OptionZ.Periodic=true;
     distribution = "uniform";
     txArraySize = [4 1]; % Linear transmit array
     rxArraySize = [1 1]; % Linear receive array
     chanBW = "CBW40"; 
-    staSeparation = .5; % STA separation, in meters, used only when the distribution is uniform
+    staSeparation = 1; % STA separation, in meters, used only when the distribution is uniform
     numSTAs = 480;  
     S = RandStream("mt19937ar","Seed",5489); % Set the RNG for reproducibility.
     RandStream.setGlobalStream(S);
@@ -21,19 +23,5 @@
     snr = 10; 
     show(APs)
     show(STAs(30),'IconSize',[32 32]);
-    cfg = heRangingConfig('ChannelBandwidth',chanBW, ...
-        "NumTransmitAntennas",prod(txArraySize), ...
-        "SecureHELTF",false, ...
-        "GuardInterval",1.6);
-    cfg.User{1}.NumSpaceTimeStreams = prod(txArraySize);
-    [features,labels] = DEFdlPositioningGenerateDataSet(rays,STAs,APs,cfg,snr);
-    lp = labels.position;
-    cfg.
-    if distribution == "uniform"
-        save('output/feats4T_.5R_3refl.mat', 'features', '-mat' );
-        save('output/labels4T_.5R_3refl.mat', 'lp', '-mat' );
-    else
-        save('output/feats4T_480R_2refl.mat', 'features', '-mat' );
-        save('output/labels4T_480R_2refl.mat', 'lp', '-mat' );
-    end
-
+    plot([rays{:,30}],'ColorLimits',[50 95]);
+    

@@ -1,0 +1,9 @@
+figure()
+array=features(:,1,2,1);
+plot(array);
+hold on
+for i=200:
+    array=features(:,1,2,i);
+    plot(array);
+end
+hold off

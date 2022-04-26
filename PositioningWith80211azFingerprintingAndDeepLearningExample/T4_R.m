@@ -17,17 +17,21 @@
         "CoordinateSystem","cartesian", ...
         "SurfaceMaterial","wood", ...
         "MaxNumReflections",2);
-    rays = raytrace(APs,STAs,pm,"Map",mapFileName);
+    %rays = raytrace(APs,STAs,pm,"Map",mapFileName);
     snr = 10; 
     show(APs)
     show(STAs(30),'IconSize',[32 32]);
+    plot([rays{:,30}],'ColorLimits',[50 95]);
     cfg = heRangingConfig('ChannelBandwidth',chanBW, ...
         "NumTransmitAntennas",prod(txArraySize), ...
         "SecureHELTF",false, ...
         "GuardInterval",1.6);
     cfg.User{1}.NumSpaceTimeStreams = prod(txArraySize);
+    
     [features,labels] = DEFdlPositioningGenerateDataSet(rays,STAs,APs,cfg,snr);
+    
     lp = labels.position;
+    
     if distribution == "uniform"
         save('output/feats4T_.5R_3refl.mat', 'features', '-mat' );
         save('output/labels4T_.5R_3refl.mat', 'lp', '-mat' );
