@@ -17,7 +17,7 @@
         "CoordinateSystem","cartesian", ...
         "SurfaceMaterial","wood", ...
         "MaxNumReflections",2);
-    %rays = raytrace(APs,STAs,pm,"Map",mapFileName);
+    rays = raytrace(APs,STAs,pm,"Map",mapFileName);
     snr = 10; 
     show(APs)
     show(STAs(30),'IconSize',[32 32]);
